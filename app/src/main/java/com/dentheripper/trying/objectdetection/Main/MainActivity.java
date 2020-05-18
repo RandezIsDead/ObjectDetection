@@ -9,13 +9,10 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.hardware.Camera;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.dentheripper.trying.objectdetection.NeuralNet.DataSet;
@@ -32,7 +29,6 @@ public class MainActivity extends Activity {
     CameraPreview cameraPreview;
     Camera camera;
     TextView classificate;
-    Button update;
 
     NeuralNetwork neuralNetwork;
 
@@ -50,7 +46,6 @@ public class MainActivity extends Activity {
         surfaceView = findViewById(R.id.surface_view);
         holder = surfaceView.getHolder();
         classificate = findViewById(R.id.classificate);
-        update = findViewById(R.id.button);
 
         cameraPreview = new CameraPreview();
         holder.addCallback(cameraPreview);
@@ -70,6 +65,20 @@ public class MainActivity extends Activity {
                         @Override
                         public void run() {
                             bitmap = getBitmapFromView();
+                            surfaceView.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Bitmap bmp = bitmap;
+                                    float[] inputs = finishImg(bmp);
+                                    DataSet dataSet = new DataSet(inputs);
+                                    neuralNetwork.forward(dataSet.data);
+                                    float[] outputs = new float[3];
+                                    for (int i = 0; i < neuralNetwork.layers[neuralNetwork.layers.length - 1].neurons.length; i++) {
+                                        outputs[i] = neuralNetwork.layers[neuralNetwork.layers.length - 1].neurons[i].value;
+                                    }
+                                    classificate.setText(classificate(outputs));
+                                }
+                            });
                         }
                     });
                 }
@@ -77,26 +86,6 @@ public class MainActivity extends Activity {
         };
 
         thread.start();
-
-        update.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                surfaceView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Bitmap bmp = bitmap;
-                        float[] inputs = finishImg(bmp);
-                        DataSet dataSet = new DataSet(inputs);
-                        neuralNetwork.forward(dataSet.data);
-                        float[] outputs = new float[3];
-                        for (int i = 0; i < neuralNetwork.layers[neuralNetwork.layers.length - 1].neurons.length; i++) {
-                            outputs[i] = neuralNetwork.layers[neuralNetwork.layers.length - 1].neurons[i].value;
-                        }
-                        classificate.setText(classificate(outputs));
-                    }
-                });
-            }
-        });
     }
 
     public float[] finishImg(Bitmap image) {
