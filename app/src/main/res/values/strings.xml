@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ObjectDetection</string>
+    <string name="class_img">Class:</string>
+    <string name="probability">Probability:</string>
+    <string name="type">Human</string>
+    <string name="percent">98.582%</string>
+    <string name="update">Update</string>
+</resources>
