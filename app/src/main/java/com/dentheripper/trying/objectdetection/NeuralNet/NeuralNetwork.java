@@ -12,43 +12,9 @@ public class NeuralNetwork {
     public NeuralNetwork() {
         layers = new Layer[4];
         layers[0] = null;
-        layers[1] = new Layer(2500, 100);
-        layers[2] = new Layer(100, 10);
-        layers[3] = new Layer(10, 3);
-
-//        float[] weights1 = loadDataSets("weightsOfFirstLayer", 10000000);
-//        float[] weights2 = loadDataSets("weightsOfSecondLayer", 100000);
-//        float[] weights3 = loadDataSets("weightsOfThirdLayer", 300);
-
-//        for (int i = 0; i < layers[1].neurons.length; i++) {
-//            for (int j = 0; j < layers[1].neurons[i].weights.length; j++) {
-//                layers[1].neurons[i].weights[j] = weights1[j];
-//            }
-//        }
-//        for (int i = 0; i < layers[2].neurons.length; i++) {
-//            for (int j = 0; j < layers[2].neurons[i].weights.length; j++) {
-//                layers[2].neurons[i].weights[j] = weights2[j];
-//            }
-//        }
-//        for (int i = 0; i < layers[3].neurons.length; i++) {
-//            for (int j = 0; j < layers[3].neurons[i].weights.length; j++) {
-//                layers[3].neurons[i].weights[j] = weights3[j];
-//            }
-//        }
-    }
-
-    float[] loadDataSets(String filename, int value) throws IOException {
-        float[] values = new float[value];
-
-        BufferedReader reader = new BufferedReader(new FileReader("resources/" + filename + ".txt"));
-        String currentLine = reader.readLine();
-        reader.close();
-        String[] tabOfFloatString = currentLine.split(" ");
-
-        for(int i = 0; i < tabOfFloatString.length; i++){
-            values[i] = Float.parseFloat(tabOfFloatString[i]);
-        }
-        return values;
+        layers[1] = new Layer(2500, 200);
+        layers[2] = new Layer(200, 200);
+        layers[3] = new Layer(200, 3);
     }
 
     public void CreateDataSet(float[][] imgs, float[][] expected) {

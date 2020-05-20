@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">ObjectDetection</string>
-    <string name="class_img">Class:</string>
-    <string name="probability">Probability:</string>
-    <string name="type">Human</string>
-    <string name="percent">98.582%</string>
+    <string name="human">Human:</string>
+    <string name="bottle">Bottle:</string>
+    <string name="laptop">Laptop:</string>
+    <string name="p">0.2398</string>
+    <string name="text">This is most likely:</string>
+    <string name="classificate">Human</string>
     <string name="update">Update</string>
 </resources>

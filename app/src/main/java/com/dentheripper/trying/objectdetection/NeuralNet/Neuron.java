@@ -4,7 +4,7 @@ public class Neuron {
 
     public float value;
     float gradient;
-    float[] weights;
+    public float[] weights;
     float bias;
     float[] cache_weights;
 
