@@ -30,5 +30,4 @@ class Functions {
         }
         return sum;
     }
-
 }

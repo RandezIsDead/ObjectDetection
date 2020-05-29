@@ -12,9 +12,9 @@ public class NeuralNetwork {
     public NeuralNetwork() {
         layers = new Layer[4];
         layers[0] = null;
-        layers[1] = new Layer(2500, 200);
-        layers[2] = new Layer(200, 200);
-        layers[3] = new Layer(200, 3);
+        layers[1] = new Layer(4900, 1000);
+        layers[2] = new Layer(1000, 100);
+        layers[3] = new Layer(100, 3);
     }
 
     public void CreateDataSet(float[][] imgs, float[][] expected) {

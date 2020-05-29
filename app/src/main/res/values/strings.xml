@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">ObjectDetection</string>
     <string name="human">Human:</string>
-    <string name="bottle">Bottle:</string>
+    <string name="car">Car:</string>
     <string name="laptop">Laptop:</string>
     <string name="p">0.2398</string>
     <string name="text">This is most likely:</string>
     <string name="classificate">Human</string>
     <string name="update">Update</string>
+    <string name="camera">Camera</string>
+    <string name="capture">Capture</string>
 </resources>

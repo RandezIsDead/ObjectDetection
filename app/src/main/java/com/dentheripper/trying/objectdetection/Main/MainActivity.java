@@ -6,11 +6,12 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.dentheripper.trying.objectdetection.Data.CreateData;
+import com.dentheripper.trying.objectdetection.Data.ImageConverter;
 import com.dentheripper.trying.objectdetection.NeuralNet.DataSet;
 import com.dentheripper.trying.objectdetection.NeuralNet.NeuralNetwork;
 import com.dentheripper.trying.objectdetection.R;
@@ -27,13 +28,11 @@ public class MainActivity extends Activity {
     TextView p1;
     TextView p2;
     TextView p3;
-    Thread thread;
 
     NeuralNetwork neuralNetwork;
-    CreateData cd;
+    ImageConverter cd;
 
     final int CAMERA_ID = 0;
-    Bitmap bmp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,15 +52,15 @@ public class MainActivity extends Activity {
         holder.addCallback(cameraPreview);
 
         neuralNetwork = new NeuralNetwork();
-        cd = new CreateData();
+        cd = new ImageConverter();
 
-        float[][] weights1 = new float[200][2500];
-        float[][] weights2 = new float[200][200];
-        float[][] weights3 = new float[3][200];
+        float[][] weights1 = new float[1000][4900];
+        float[][] weights2 = new float[100][1000];
+        float[][] weights3 = new float[3][100];
         try {
-            weights1 = cd.castTo2dArray(cd.loadDataSets("weightsOfFirstLayer", 500000), 200, 2500);
-            weights2 = cd.castTo2dArray(cd.loadDataSets("weightsOfSecondLayer", 40000), 200, 200);
-            weights3 = cd.castTo2dArray(cd.loadDataSets("weightsOfThirdLayer", 600), 3, 200);
+            weights1 = cd.castTo2dArray(cd.loadDataSets("weightsOfFirstLayer", 4900000), 1000, 4900);
+            weights2 = cd.castTo2dArray(cd.loadDataSets("weightsOfSecondLayer", 100000), 100, 1000);
+            weights3 = cd.castTo2dArray(cd.loadDataSets("weightsOfThirdLayer", 300), 3, 100);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -81,45 +80,6 @@ public class MainActivity extends Activity {
                 neuralNetwork.layers[3].neurons[i].weights[j] = weights3[i][j];
             }
         }
-
-        thread = new Thread() {
-            @Override
-            public void run() {
-                while (!isInterrupted()) {
-                    try {
-                        Thread.sleep(250);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            surfaceView.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    bmp = getBitmapFromView();
-                                    float[] inputs = cd.finishImg(bmp);
-                                    DataSet dataSet = new DataSet(inputs);
-                                    neuralNetwork.forward(dataSet.data);
-                                    float[] outputs = new float[3];
-                                    for (int i = 0; i < neuralNetwork.layers[neuralNetwork.layers.length - 1].neurons.length; i++) {
-                                        outputs[i] = neuralNetwork.layers[neuralNetwork.layers.length - 1].neurons[i].value;
-                                        System.out.println(outputs[i]);
-                                    }
-                                    p1.setText(String.valueOf(outputs[0]*100));
-                                    p2.setText(String.valueOf(outputs[1]*100));
-                                    p3.setText(String.valueOf(outputs[2]*100));
-                                    System.out.println("==================");
-                                    classificate.setText(cd.classificate(outputs));
-                                }
-                            });
-                        }
-                    });
-                }
-            }
-        };
-
-        thread.start();
     }
 
     public Bitmap getBitmapFromView() {
@@ -138,6 +98,28 @@ public class MainActivity extends Activity {
         if (camera != null)
             camera.release();
         camera = null;
+    }
+
+    public void onCapture(View view) {
+        surfaceView.post(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap bmp = getBitmapFromView();
+                float[] inputs = cd.finishImg(bmp);
+                DataSet dataSet = new DataSet(inputs);
+                neuralNetwork.forward(dataSet.data);
+                float[] outputs = new float[3];
+                for (int i = 0; i < neuralNetwork.layers[neuralNetwork.layers.length - 1].neurons.length; i++) {
+                    outputs[i] = neuralNetwork.layers[neuralNetwork.layers.length - 1].neurons[i].value;
+                    System.out.println(outputs[i]);
+                }
+                p1.setText(String.valueOf(outputs[0]*100));
+                p2.setText(String.valueOf(outputs[1]*100));
+                p3.setText(String.valueOf(outputs[2]*100));
+                System.out.println("==================");
+                classificate.setText(cd.classificate(outputs));
+            }
+        });
     }
 
     class CameraPreview implements SurfaceHolder.Callback {
